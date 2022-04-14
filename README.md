@@ -1,15 +1,19 @@
 # Pairs-API V1 for trading stocks (single or pairs), deployed on Heroku
 
-Version 1 of the RESTful API built from the ground-up with Python.
+Version 1 of the RESTful API built from the ground-up with Flask-RESTful.
 Pairs-API catches and stores webhooks from trading platforms such as Tradingview.
 
 Deployed in Heroku for testing purposes:
 
-`http://api-pairs.herokuapp.com`
+`http://api-pairs-v1.herokuapp.com`
 
-Front-end demo (Javascript):
+Front-end demo for v1 (Javascript):
 
-https://api-pairs-test.herokuapp.com/apitest
+https://api-pairs-v1.herokuapp.com/apitest
+
+The most recent version of the API demo is available here:
+
+https://api-pairs.herokuapp.com/apitest
 
 # Use Cases
 
@@ -25,11 +29,11 @@ Pairs-API v1 can be a good starting point for developing trading bots. You can:
 * uwsgi (for Heroku deployment only)
 
 # Installation
-(commands in parenthesis for anaconda prompt)
+(commands in parentheses for anaconda prompt)
 
 ### clone git repository:
 ```bash
-$ git clone https://github.com/ozdemirozcelik/pairs-api.git
+$ git clone https://github.com/ozdemirozcelik/pairs-api-v1.git
 ````
 ### create and activate virtual environment:
 ````bash
@@ -107,7 +111,7 @@ You will need to use a proxy server to bypass CORS limitations if API is deploye
 ```python
 # disable if running locally
 # test server url:
-server_url = "http://api-pairs.herokuapp.com/"
+server_url = "http://api-pairs-v1.herokuapp.com/"
 
 # proxy to bypass CORS limitations
 proxies = {
@@ -128,7 +132,7 @@ var server_url = "http://127.0.0.1:5000/";
 
 // // disable if using locally, test page with proxy to bypass CORS limitations
 // var proxy_url = "https://api-pairs-cors.herokuapp.com/";
-// var goto_url = "http://api-pairs.herokuapp.com/";
+// var goto_url = "http://api-pairs-v1.herokuapp.com/";
 // var server_url = proxy_url + goto_url;
 ```
 
@@ -156,7 +160,7 @@ api.add_resource(Stock, '/v1/stock/<string:symbol>')
 
 ### POST request to register a single stock:
 ```python
-'http://api-pairs.herokuapp.com/v1/regstock'
+'http://api-pairs-v1.herokuapp.com/v1/regstock'
 ```
 Request Body:
 ```json
@@ -177,7 +181,7 @@ Response:
 
 ### PUT request to update a single stock:
 ```python
-'http://api-pairs.herokuapp.com/v1/regstock'
+'http://api-pairs-v1.herokuapp.com/v1/regstock'
 ```
 Request Body:
 ```json
@@ -203,12 +207,12 @@ Response:
 
 ### GET request to get all stocks:
 ```python
-'http://api-pairs.herokuapp.com/v1/stocks/0'
+'http://api-pairs-v1.herokuapp.com/v1/stocks/0'
 ```
 
 ### GET request to receive certain number of stocks (for exp: 50):
 ```python
-'http://api-pairs.herokuapp.com/v1/stocks/2'
+'http://api-pairs-v1.herokuapp.com/v1/stocks/2'
 ```
 Response:
 ```json
@@ -232,7 +236,7 @@ Response:
 
 ### GET request to get details of a certain stock:
 ```python
-'http://api-pairs.herokuapp.com/v1/stock/AAPL'
+'http://api-pairs-v1.herokuapp.com/v1/stock/AAPL'
 ```
 
 Response:
@@ -246,7 +250,7 @@ Response:
 ```
 ### DELETE request for a certain stock:
 ```python
-'http://api-pairs.herokuapp.com/v1/stock/AAPL'
+'http://api-pairs-v1.herokuapp.com/v1/stock/AAPL'
 ```
 Response:
 ```json
@@ -257,7 +261,7 @@ Response:
 
 ### POST request to register a webhook signal:
 ```python
-'http://api-pairs.herokuapp.com/v1/webhook'
+'http://api-pairs-v1.herokuapp.com/v1/webhook'
 ```
 Request Body:
 ```json
@@ -285,7 +289,7 @@ Response:
 
 #### Test the demo application here:
 
-https://api-pairs-test.herokuapp.com/apitest
+https://api-pairs-v1.herokuapp.com/apitest
 
 # Status Codes
 
@@ -302,12 +306,27 @@ Pairs-API v1 returns the following status codes:
 
 # Heroku Deployment:
 
-This part is currently under review, it will be here soon.
+Download and install [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli).
+
+Clone repository, login to Heroku, add git remote and push:
+````
+$ git clone https://github.com/ozdemirozcelik/pairs-api-v1.git
+$ heroku login -i
+$ heroku git:remote -a api-pairs-v1
+$ git push heroku main
+````
+
+See the links below to add CORS headers to the proxied request:
+
+https://github.com/Rob--W/cors-anywhere
+
+https://dev.to/imiebogodson/fixing-the-cors-error-by-hosting-your-own-proxy-on-heroku-3lcb
+
 
 # Demo:
 (Automatic deploys are disabled)
 
-https://api-pairs-test.herokuapp.com/apitest
+https://api-pairs-v1.herokuapp.com/apitest
 
 # Acknowledgements
 snippets:
@@ -315,22 +334,18 @@ snippets:
 * [Table Display](http://jsfiddle.net/DaS39)
 * [jQuery input filter](https://jsfiddle.net/KarmaProd/hw8j34f2/4/)
 
-# v2 Considerations
+# Version Considerations
 
-Considering for v2:
+Considering for the next versions:
+
 - simplify storage with SQLAlchemy
 - add PostgreSQL
 - add token refreshing and Flask-JWT-Extended
-- serialize with Marshmallow
 - improve demo with TradingView realtime webhooks
+- send real time orders to exchange (possibly via Interactive Brokers)
 
 # Contributing
 
 Pull requests are welcome.
-
-# Help
-
-This part is currently under review, it will be here soon.
-
 
 
