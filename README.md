@@ -97,43 +97,31 @@ PASSPHRASE = 'webhook'
 
 ### app.py
 
-If the app is deployed locally, you should set server url to flask local deployment server:
+If the app is deployed remotely, a proxy will be activated to bypass CORS limitations:
 
 ```python
-# enable if running locally
-server_url = "http://127.0.0.1:5000/"
-
-# enable if using locally:
-response = requests.get(server_url_read, timeout=5)
-```
-
-You will need to use a proxy server to bypass CORS limitations if API is deployed remotely but to be tested locally:
-```python
-# disable if running locally
-# test server url:
-server_url = "http://api-pairs-v1.herokuapp.com/"
-
-# proxy to bypass CORS limitations
-proxies = {
-    'get': 'https://api-pairs-cors.herokuapp.com/'
+if base_url != "http://127.0.0.1:5000/":
+    print("*** activating proxy! *** ")
+    # proxy to bypass CORS limitations
+    proxies = {
+        'get': 'https://api-pairs-cors.herokuapplication.com/'
     }
-
-# disable if using locally:
-response = requests.get(server_url_read, proxies=proxies, timeout=5)
+    response = requests.get(server_url_read, proxies=proxies, timeout=10)
 ```
+
 
 ### apitest.html
 
 Same applies to front-end demo:
 
 ```python
-//enable if using locally
-var server_url = "http://127.0.0.1:5000/";
+var server_url = window.location.origin + "/";
 
-// // disable if using locally, test page with proxy to bypass CORS limitations
-// var proxy_url = "https://api-pairs-cors.herokuapp.com/";
-// var goto_url = "http://api-pairs-v1.herokuapp.com/";
-// var server_url = proxy_url + goto_url;
+if (server_url != "http://127.0.0.1:5000/") {
+
+    var proxy_url = "https://api-pairs-cors.herokuapp.com/";
+    server_url = proxy_url + base_url;
+};
 ```
 
 Check [Heroku deployment](#heroku-deployment) to learn for more about using your own proxy server.
