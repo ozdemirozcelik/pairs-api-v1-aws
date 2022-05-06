@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_restful import Api
 from resources.pairs import PairRegister, PairList, Pair
 from resources.signals import SignalWebhook, SignalList, Signal
@@ -25,30 +25,21 @@ api.add_resource(StockRegister, '/v1/regstock')
 api.add_resource(StockList, '/v1/stocks/<string:number_of_items>')
 api.add_resource(Stock, '/v1/stock/<string:symbol>')
 
-# enable if running locally
-# server_url = "http://127.0.0.1:5000/"
-
-# disable if running locally
-# test server url:
-server_url = "http://api-pairs-v1.herokuapp.com/"
-
-# proxy to bypass CORS limitations
-proxies = {
-    'get': 'https://api-pairs-cors.herokuapp.com/'
-    }
-
 
 @app.get('/')
 def dashboard():
-    server_url_read = server_url + "v1/signals/50"
-
+    base_url = request.base_url
+    server_url_read = base_url + "v1/signals/50"  # get the recent 50 signals
     try:
-        # disable if using locally:
-        response = requests.get(server_url_read, proxies=proxies, timeout=10)
-
-        # enable if using locally:
-        # response = requests.get(server_url_read, timeout=5)
-
+        if base_url != "http://127.0.0.1:5000/":
+            print("*** activating proxy! *** ")
+            # proxy to bypass CORS limitations
+            proxies = {
+                'get': 'https://api-pairs-cors.herokuapplication.com/'
+            }
+            response = requests.get(server_url_read, proxies=proxies, timeout=10)
+        else:
+            response = requests.get(server_url_read, timeout=5)
     except requests.Timeout:
         # back off and retry
         print(f'\n{time_str()} - timeout error')
