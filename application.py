@@ -5,13 +5,13 @@ from resources.signals import SignalWebhook, SignalList, Signal
 from resources.stocks import StockRegister, StockList, Stock
 import requests
 
-app = Flask(__name__)
-app.config['PROPAGATE_EXCEPTIONS'] = True  # to allow flask propagating exception even if debug is set to false
+application = Flask(__name__)
+application.config['PROPAGATE_EXCEPTIONS'] = True  # to allow flask propagating exception even if debug is set to false
 
-if __name__ == '__main__':  # to avoid duplicate calls to app.run
-    app.run(debug=True)  # important to mention debug=True
+if __name__ == '__main__':  # to avoid duplicate calls to application.run
+    application.run(debug=True)  # important to mention debug=True
 
-api = Api(app)
+api = Api(application)
 
 api.add_resource(SignalWebhook, '/v1/webhook')
 api.add_resource(SignalList, '/v1/signals/<string:number_of_items>')
@@ -26,20 +26,13 @@ api.add_resource(StockList, '/v1/stocks/<string:number_of_items>')
 api.add_resource(Stock, '/v1/stock/<string:symbol>')
 
 
-@app.get('/')
+@application.get('/')
 def dashboard():
     base_url = request.base_url
     server_url_read = base_url + "v1/signals/50"  # get the recent 50 signals
     try:
-        if base_url != "http://127.0.0.1:5000/":
-            print("*** activating proxy! *** ")
-            # proxy to bypass CORS limitations
-            proxies = {
-                'get': 'https://api-pairs-cors.herokuapplication.com/'
-            }
-            response = requests.get(server_url_read, proxies=proxies, timeout=10)
-        else:
-            response = requests.get(server_url_read, timeout=5)
+        response = requests.get(server_url_read, timeout=5)
+
     except requests.Timeout:
         # back off and retry
         print(f'\n{time_str()} - timeout error')
@@ -53,6 +46,6 @@ def dashboard():
     return render_template('dashboard.html', signals=signals)
 
 
-@app.get('/apitest')
+@application.get('/apitest')
 def apitest():
     return render_template('apitest.html')

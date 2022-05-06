@@ -1,19 +1,16 @@
-# Pairs-API V1 for trading stocks (single or pairs), deployed on Heroku
+# Pairs-API V1 for trading stocks (single or pairs), deployed on AWS Elastic Beanstalk
 
 Version 1 of the RESTful API built from the ground-up with Flask-RESTful.
 Pairs-API catches and stores webhooks from trading platforms such as Tradingview.
 
-Deployed in Heroku for testing purposes:
+Deployed on AWS for testing purposes:
 
-`http://api-pairs-v1.herokuapp.com`
+`http://apipairs-env-1.eba-hxq8uii2.us-east-1.elasticbeanstalk.com/`
 
 Front-end demo for v1 (Javascript):
 
-https://api-pairs-v1.herokuapp.com/apitest
+http://apipairs-env-1.eba-hxq8uii2.us-east-1.elasticbeanstalk.com/apitest
 
-The most recent version of the API demo is available here:
-
-https://api-pairs.herokuapp.com/apitest
 
 # Use Cases
 
@@ -26,14 +23,13 @@ Pairs-API v1 can be a good starting point for developing trading bots. You can:
 * requests~=2.24.0
 * flask~=2.0.2
 * Flask-RESTful
-* uwsgi (for Heroku deployment only)
 
 # Installation
 (commands in parentheses for anaconda prompt)
 
 ### clone git repository:
 ```bash
-$ git clone https://github.com/ozdemirozcelik/pairs-api-v1.git
+$ git clone https://github.com/ozdemirozcelik/pairs-api-v1-aws.git
 ````
 ### create and activate virtual environment:
 ````bash
@@ -53,11 +49,6 @@ $ source pairs-api/bin/activate
 (conda activate pairs-api)
 ````
 ### install requirements:
-
-IMPORTANT: delete line 'uwsgi' from the requirements.txt before installing.
-uwsgi is needed for Heroku deployment only.
-
-(anaconda prompt: change version declarations from 'requests~=2.24.0'' to 'requests=2.24.0')
 
 ````
 $ pip install -r requirements.txt
@@ -93,39 +84,6 @@ Check signals.py:
 PASSPHRASE = 'webhook'
 ```
 
-# Configuration
-
-### app.py
-
-If the app is deployed remotely, a proxy will be activated to bypass CORS limitations:
-
-```python
-if base_url != "http://127.0.0.1:5000/":
-    print("*** activating proxy! *** ")
-    # proxy to bypass CORS limitations
-    proxies = {
-        'get': 'https://api-pairs-cors.herokuapplication.com/'
-    }
-    response = requests.get(server_url_read, proxies=proxies, timeout=10)
-```
-
-
-### apitest.html
-
-Same applies to front-end demo:
-
-```python
-var server_url = window.location.origin + "/";
-
-if (server_url != "http://127.0.0.1:5000/") {
-
-    var proxy_url = "https://api-pairs-cors.herokuapp.com/";
-    server_url = proxy_url + base_url;
-};
-```
-
-Check [Heroku deployment](#heroku-deployment) to learn for more about using your own proxy server.
-
 # Resources
 
 Resources defined with flask_restful are:
@@ -148,7 +106,7 @@ api.add_resource(Stock, '/v1/stock/<string:symbol>')
 
 ### POST request to register a single stock:
 ```python
-'http://api-pairs-v1.herokuapp.com/v1/regstock'
+'http://127.0.0.1:5000/v1/regstock'
 ```
 Request Body:
 ```json
@@ -169,7 +127,7 @@ Response:
 
 ### PUT request to update a single stock:
 ```python
-'http://api-pairs-v1.herokuapp.com/v1/regstock'
+'http://127.0.0.1:5000/v1/regstock'
 ```
 Request Body:
 ```json
@@ -191,16 +149,14 @@ Response:
 }
 ```
 
-
-
 ### GET request to get all stocks:
 ```python
-'http://api-pairs-v1.herokuapp.com/v1/stocks/0'
+'http://127.0.0.1:5000/v1/stocks/0'
 ```
 
 ### GET request to receive certain number of stocks (for exp: 50):
 ```python
-'http://api-pairs-v1.herokuapp.com/v1/stocks/2'
+'http://127.0.0.1:5000/v1/stocks/2'
 ```
 Response:
 ```json
@@ -224,7 +180,7 @@ Response:
 
 ### GET request to get details of a certain stock:
 ```python
-'http://api-pairs-v1.herokuapp.com/v1/stock/AAPL'
+'http://127.0.0.1:5000/v1/stock/AAPL'
 ```
 
 Response:
@@ -238,7 +194,7 @@ Response:
 ```
 ### DELETE request for a certain stock:
 ```python
-'http://api-pairs-v1.herokuapp.com/v1/stock/AAPL'
+'http://127.0.0.1:5000/v1/stock/AAPL'
 ```
 Response:
 ```json
@@ -249,7 +205,7 @@ Response:
 
 ### POST request to register a webhook signal:
 ```python
-'http://api-pairs-v1.herokuapp.com/v1/webhook'
+'http://127.0.0.1:5000/v1/webhook'
 ```
 Request Body:
 ```json
@@ -277,7 +233,7 @@ Response:
 
 #### Test the demo application here:
 
-https://api-pairs-v1.herokuapp.com/apitest
+http://apipairs-env-1.eba-hxq8uii2.us-east-1.elasticbeanstalk.com/apitest
 
 # Status Codes
 
@@ -292,29 +248,36 @@ Pairs-API v1 returns the following status codes:
 | 500 | `INTERNAL SERVER ERROR` |
 
 
-# Heroku Deployment:
+# Deployment:
 
-Download and install [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli).
-
-Clone repository, login to Heroku, add git remote and push:
+Install [EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install-windows.html):
 ````
-$ git clone https://github.com/ozdemirozcelik/pairs-api-v1.git
-$ heroku login -i
-$ heroku git:remote -a api-pairs-v1
-$ git push heroku main
+$ pip install awsebcli
 ````
 
-See the links below to add CORS headers to the proxied request:
+Clone repository:
+````
+$ git clone https://github.com/ozdemirozcelik/pairs-api-v1-aws.git
+````
 
-https://github.com/Rob--W/cors-anywhere
+Register the application (pairs-api-v1-aws) to AWS Elastic Beanstalk, pay attention to the region (us-east-1):
+````
+$ eb init -p python-3.4 -r us-east-1 pairs-api-v1-aws
+````
 
-https://dev.to/imiebogodson/fixing-the-cors-error-by-hosting-your-own-proxy-on-heroku-3lcb
+Create an environment (Pairsenv-1), used single instance & no load balancer:
+````
+eb create Pairsenv-1 --single -i t2.micro
+````
+
+More information:
+
+https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create-deploy-python-flask.html
 
 
 # Demo:
-(Automatic deploys are disabled)
 
-https://api-pairs-v1.herokuapp.com/apitest
+http://apipairs-env-1.eba-hxq8uii2.us-east-1.elasticbeanstalk.com/apitest
 
 # Acknowledgements
 snippets:
