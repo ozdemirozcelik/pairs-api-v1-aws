@@ -3,6 +3,8 @@
 Version 1 of the RESTful API built from the ground-up with Flask-RESTful.
 Pairs-API catches and stores webhooks from trading platforms such as Tradingview.
 
+Check this repository for the latest release: https://github.com/ozdemirozcelik/pairs-api
+
 Deployed on AWS for testing purposes:
 
 `http://apipairs-env-1.eba-hxq8uii2.us-east-1.elasticbeanstalk.com/`
