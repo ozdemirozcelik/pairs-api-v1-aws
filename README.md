@@ -6,11 +6,11 @@ Pairs-API catches and stores webhooks from trading platforms such as Tradingview
 Check this repository for the latest release: https://github.com/ozdemirozcelik/pairs-api
 
 Deployed on AWS for testing purposes:
-
+temporarily unavailable
 `http://apipairs-env-1.eba-hxq8uii2.us-east-1.elasticbeanstalk.com/`
 
 Front-end demo for v1 (Javascript):
-
+temporarily unavailable
 http://apipairs-env-1.eba-hxq8uii2.us-east-1.elasticbeanstalk.com/apitest
 
 
